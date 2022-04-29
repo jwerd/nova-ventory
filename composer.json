@@ -2,15 +2,21 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "codebykyle/calculated-field": "^1.1",
         "guzzlehttp/guzzle": "^7.2",
+        "jwerd/price-calc": "*",
         "laravel/framework": "^9.2",
+        "laravel/nova": "^4.0",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
-        "laravel/nova": "^4.0"
+        "spatie/laravel-medialibrary": "^10.0.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -38,7 +44,8 @@
             "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+            "@php artisan nova:publish"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
@@ -61,6 +68,10 @@
         {
             "type": "composer",
             "url": "https://nova.laravel.com"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/PriceCalc"
         }
     ],
     "minimum-stability": "dev",

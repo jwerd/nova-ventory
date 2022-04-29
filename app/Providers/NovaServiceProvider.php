@@ -2,13 +2,15 @@
 
 namespace App\Providers;
 
+use App\Nova\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
 use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Menu\MenuItem;
-use App\Models\User;
+use App\Nova\User;
+use App\Nova\Order;
 use Laravel\Nova\Dashboards\Main;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
@@ -21,15 +23,21 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function boot()
     {
         parent::boot();
-//        Nova::mainMenu(function (Request $request) {
-//            return [
-//                MenuSection::dashboard(Main::class)->icon('chart-bar'),
-//
-//                MenuSection::make('Products', [
-//                    MenuItem::resource(User::class),
-//                ])->icon('user')->collapsable(),
-//            ];
-//        });
+
+        Nova::mainMenu(function (Request $request) {
+            return [
+                MenuSection::dashboard(Main::class)->icon('chart-bar'),
+
+                MenuSection::make('Store', [
+                    MenuItem::resource(Product::class),
+                    MenuItem::resource(Order::class),
+                ])->icon('document-text')->collapsable(),
+
+                MenuSection::make('Admin', [
+                    MenuItem::resource(User::class),
+                ])->icon('user')->collapsable(),
+            ];
+        });
 
     }
 
@@ -81,7 +89,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function tools()
     {
-        return [];
+        return [
+        ];
     }
 
     /**

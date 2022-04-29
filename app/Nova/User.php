@@ -2,16 +2,22 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\MarkProductSold;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
+use Laravel\Nova\Actions\Actionable;
 use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Sadsoft\Product\Product;
+use Sadsoft\SoldProduct\SoldProduct;
 
 class User extends Resource
 {
+    use Actionable;
+
     /**
      * The model the resource corresponds to.
      *
@@ -45,7 +51,6 @@ class User extends Resource
     {
         return [
             ID::make()->sortable(),
-
             Gravatar::make()->maxWidth(50),
 
             Text::make('Name')
@@ -62,6 +67,7 @@ class User extends Resource
                 ->onlyOnForms()
                 ->creationRules('required', Rules\Password::defaults())
                 ->updateRules('nullable', Rules\Password::defaults()),
+//            SoldProduct::make('SoldProduct'),
         ];
     }
 
@@ -106,6 +112,8 @@ class User extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [];
+        return [
+            MarkProductSold::make()
+        ];
     }
 }
