@@ -5,6 +5,7 @@ namespace App\Nova;
 use App\Nova\Actions\MarkProductSold;
 use Illuminate\Http\Request;
 use Jwerd\PriceCalc\PriceCalc;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\KeyValue;
@@ -56,7 +57,10 @@ class Product extends Resource
             Number::make('Purchase Price', 'price')->rules('required'),
             $this->KeyValueCreate(),
             $this->KeyValueUpdate(),
-            Text::make('list_price')->onlyOnDetail()->onlyOnIndex()->rules('required'),
+            Text::make('List Price', 'list_price')
+                ->onlyOnDetail()
+                ->onlyOnIndex()
+                ->rules('required'),
             PriceCalc::make('Pricing Calculator', 'list_price')
                 ->hideWhenCreating()
                 ->hideFromDetail()
@@ -66,6 +70,7 @@ class Product extends Resource
             Text::make('Description', )
                 ->placeholder('Item purchased from Habitat for Humanity')
                 ->rules('max:255'),
+            Date::make('Added on', 'created_at'),
         ];
     }
 
@@ -124,6 +129,9 @@ class Product extends Resource
             ->disableEditingKeys()
             ->showOnCreating()
             ->hideWhenUpdating()
+            ->displayUsing(function ($object) {
+                dd($object);
+            })
             ->resolveUsing(function ($object) {
                 return [
                     'H' => 0,
