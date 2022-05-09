@@ -8,6 +8,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class MarkProductSold extends Action
@@ -34,6 +36,8 @@ class MarkProductSold extends Action
      */
     public function fields(NovaRequest $request)
     {
-        return [];
+        return [
+            Number::make('Price', 'price_sold')->placeholder('What price did you sell?'),
+        ];
     }
 }

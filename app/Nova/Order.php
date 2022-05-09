@@ -3,7 +3,12 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Currency;
+use Laravel\Nova\Fields\Date;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Order extends Resource
@@ -13,7 +18,7 @@ class Order extends Resource
      *
      * @var string
      */
-    public static $model = \App\Models\Order::class;
+    public static $model = \App\Models\SoldItem::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -32,6 +37,24 @@ class Order extends Resource
     ];
 
     /**
+     * Build an "index" query for the given resource.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        // Set a default sort if nothing is passed in
+        if($request->isNotFilled('orderBy')) {
+            $query->getQuery()->orders = [];
+            return $query->latest('updated_at');
+        }
+        return $query;
+    }
+
+
+    /**
      * Get the fields displayed by the resource.
      *
      * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
@@ -40,7 +63,11 @@ class Order extends Resource
     public function fields(NovaRequest $request)
     {
         return [
-            ID::make()->sortable(),
+//            ID::make()->sortable(),
+            Text::make('Name'),
+            Currency::make('Price Sold', 'price_sold')->sortable(),
+            Currency::make('Revenue')->sortable(),
+            Date::make('Sold On', 'updated_at')->sortable(),
         ];
     }
 

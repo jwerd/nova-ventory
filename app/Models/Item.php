@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Scopes\ItemScope;
+use App\Models\Scopes\UnsoldItemsScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -40,6 +41,8 @@ class Item extends Model implements HasMedia
     protected static function booted()
     {
         static::addGlobalScope(new ItemScope);
+        static::addGlobalScope(new UnsoldItemsScope);
+
         static::creating(function ($item) {
             // Set our defaults for old system
             $item->qty = 1;
@@ -52,8 +55,13 @@ class Item extends Model implements HasMedia
     {
         $this
             ->addMediaConversion('thumb')
-            ->fit(Manipulations::FIT_CROP, 200, 200)
-            ->nonQueued();
+            ->width(200)
+            ->height(200);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('main')->singleFile();
     }
 
     public function getSoldOnAttribute($value)
@@ -77,17 +85,5 @@ class Item extends Model implements HasMedia
     {
         $query->where('available', false)
             ->whereNotNull('price_sold');
-    }
-
-    /**
-     * Get the item's total revenue
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    public function revenue(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, $attributes) => $attributes['price_sold']-$attributes['price']
-        );
     }
 }

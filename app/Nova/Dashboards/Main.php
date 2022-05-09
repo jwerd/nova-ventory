@@ -2,6 +2,8 @@
 
 namespace App\Nova\Dashboards;
 
+use App\Nova\Metrics\MonthToDateSales;
+use App\Nova\Metrics\YearToDateSales;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Dashboards\Main as Dashboard;
 
@@ -15,7 +17,9 @@ class Main extends Dashboard
     public function cards()
     {
         return [
-            new Help,
+            new MonthToDateSales,
+            new YearToDateSales
+//            new Help,
         ];
     }
 }

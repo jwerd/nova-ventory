@@ -19,5 +19,4 @@ class ItemScope implements Scope
     {
         $builder->where('user_id', '=', auth()->id());
     }
-
 }

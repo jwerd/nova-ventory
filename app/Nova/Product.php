@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Nova\Actions\MarkProductSold;
+use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
 use Illuminate\Http\Request;
 use Jwerd\PriceCalc\PriceCalc;
 use Laravel\Nova\Fields\Date;
@@ -54,12 +55,12 @@ class Product extends Resource
         return [
             ID::make()->sortable(),
             Text::make('Name', )->rules('required', 'max:255'),
+            Images::make('Main image', 'main') // second parameter is the media collection name
+                ->conversionOnIndexView('thumb'), // conversion used to display the image
             Number::make('Purchase Price', 'price')->rules('required'),
-            $this->KeyValueCreate(),
-            $this->KeyValueUpdate(),
             Text::make('List Price', 'list_price')
-                ->onlyOnDetail()
-                ->onlyOnIndex()
+                ->showOnIndex()
+                ->showOnDetail()
                 ->rules('required'),
             PriceCalc::make('Pricing Calculator', 'list_price')
                 ->hideWhenCreating()
@@ -67,10 +68,13 @@ class Product extends Resource
                 ->hideFromIndex()
                 ->withMeta(['price' => $this->price])
                 ->rules('required'),
+            $this->KeyValueCreate(),
+            $this->KeyValueUpdate(),
             Text::make('Description', )
                 ->placeholder('Item purchased from Habitat for Humanity')
                 ->rules('max:255'),
             Date::make('Added on', 'created_at'),
+
         ];
     }
 
@@ -93,7 +97,8 @@ class Product extends Resource
      */
     public function filters(NovaRequest $request)
     {
-        return [];
+        return [
+        ];
     }
 
     /**
