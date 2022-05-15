@@ -28,16 +28,11 @@ class MarkProductSold extends Action
         $item = $models->first();
 
         try {
-            $price_sold = $fields->get('price_sold', null);
             if(empty($item)) {
-                throw new \Exception('Something happened');
+                throw new \Exception('Something went wrong');
             }
 
-            if(!$price_sold) {
-                throw new \Exception('No Price Set');
-            }
-
-            // Update price with our values
+            // Update price_sold and mark sold
             $item->markItemSold($fields->get('price_sold'));
 
             return Action::visit('/resources/orders');
