@@ -63,7 +63,7 @@ class Order extends Resource
     public function fields(NovaRequest $request)
     {
         return [
-//            ID::make()->sortable(),
+            ID::make()->sortable(),
             Text::make('Name'),
             Currency::make('Price Sold', 'price_sold')->sortable(),
             Currency::make('Revenue')->sortable(),

@@ -25,7 +25,25 @@ class MarkProductSold extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        //
+        $item = $models->first();
+
+        try {
+            $price_sold = $fields->get('price_sold', null);
+            if(empty($item)) {
+                throw new \Exception('Something happened');
+            }
+
+            if(!$price_sold) {
+                throw new \Exception('No Price Set');
+            }
+
+            // Update price with our values
+            $item->markItemSold($fields->get('price_sold'));
+
+            return Action::visit('/resources/orders');
+        } catch(\Exception $e) {
+            abort(500, $e->getMessage());
+        }
     }
 
     /**
@@ -37,7 +55,9 @@ class MarkProductSold extends Action
     public function fields(NovaRequest $request)
     {
         return [
-            Number::make('Price', 'price_sold')->placeholder('What price did you sell?'),
+            Number::make('Price', 'price_sold')
+                ->rules('required')
+                ->placeholder('What price did you sell?'),
         ];
     }
 }

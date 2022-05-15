@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Scopes\ItemScope;
+use App\Models\Scopes\SoldItemsScope;
 use App\Models\Scopes\UnsoldItemsScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,12 +14,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
-
-class Item extends Model implements HasMedia
+class SoldItem extends Model implements HasMedia
 {
     use HasFactory;
     use SoftDeletes;
     use InteractsWithMedia;
+
+    protected $table = 'items';
 
     protected $fillable = [
         'name',
@@ -41,27 +43,7 @@ class Item extends Model implements HasMedia
     protected static function booted()
     {
         static::addGlobalScope(new ItemScope);
-        static::addGlobalScope(new UnsoldItemsScope);
-
-        static::creating(function ($item) {
-            // Set our defaults for old system
-            $item->qty = 1;
-            $item->available = true;
-            $item->user_id = auth()->id() ?? 1;
-        });
-    }
-
-    public function registerMediaConversions(Media $media = null): void
-    {
-        $this
-            ->addMediaConversion('thumb')
-            ->width(200)
-            ->height(200);
-    }
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('main')->singleFile();
+        static::addGlobalScope(new SoldItemsScope);
     }
 
     public function getSoldOnAttribute($value)
@@ -75,24 +57,20 @@ class Item extends Model implements HasMedia
         return $this->belongsTo(User::class);
     }
 
-    public function markItemSold(float $price): void
-    {
-        $this->update([
-            'price_sold' => $price,
-            'sold_on'    => now(),
-            'available'  => false
-        ]);
-    }
-
     /**
-     * Scope a query to only include sold items.
+     * Get the item's total revenue
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function scopeSold($query)
+    public function revenue(): Attribute
     {
-        $query->where('available', false)
-            ->whereNotNull('price_sold');
+        return Attribute::make(
+            get: function ($value, $attributes) {
+                $price      = data_get($attributes, 'price', 0);
+                $sold_price = data_get($attributes, 'price_sold', 0);
+
+                return ($sold_price > $price) ? $sold_price-$price : 0;
+            }
+        );
     }
 }
