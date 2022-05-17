@@ -5,6 +5,7 @@ namespace App\Nova;
 use App\Nova\Actions\MarkProductSold;
 use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Jwerd\PriceCalc\PriceCalc;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Hidden;
@@ -14,6 +15,7 @@ use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Fields\FormData;
+use Laravel\Nova\Panel;
 
 class Product extends Resource
 {
@@ -29,7 +31,7 @@ class Product extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'name';
 
     /**
      * The columns that should be searched.
@@ -57,23 +59,31 @@ class Product extends Resource
             Text::make('Name', )->rules('required', 'max:255'),
             Images::make('Main image', 'main') // second parameter is the media collection name
                 ->conversionOnIndexView('thumb'), // conversion used to display the image
-            Number::make('Purchase Price', 'price')->rules('required'),
-            Text::make('List Price', 'list_price')
-                ->showOnIndex()
-                ->showOnDetail()
-                ->rules('required'),
-            PriceCalc::make('Pricing Calculator', 'list_price')
-                ->hideWhenCreating()
-                ->hideFromDetail()
-                ->hideFromIndex()
-                ->withMeta(['price' => $this->price])
-                ->rules('required'),
+
+            new Panel('Pricing Information', [
+                Number::make('Purchase Price', 'price')->rules('required'),
+                Text::make('List Price', 'list_price')
+                    ->showOnIndex()
+                    ->showOnDetail()
+                    ->hideWhenCreating()
+                    ->hideWhenUpdating()
+                    ->rules('required'),
+                PriceCalc::make('Pricing Calculator', 'list_price')
+                    ->hideWhenCreating()
+                    ->hideFromDetail()
+                    ->hideFromIndex()
+                    ->withMeta(['price' => $this->price])
+                    ->rules('required'),
+            ]),
+
             $this->KeyValueCreate(),
             $this->KeyValueUpdate(),
-            Text::make('Description', )
+
+            Text::make('Description')
                 ->placeholder('Item purchased from Habitat for Humanity')
                 ->rules('max:255'),
-            Date::make('Added on', 'created_at'),
+            Date::make('Added on', 'created_at')
+                ->hideWhenCreating(),
 
         ];
     }
@@ -134,9 +144,6 @@ class Product extends Resource
             ->disableEditingKeys()
             ->showOnCreating()
             ->hideWhenUpdating()
-            ->displayUsing(function ($object) {
-                dd($object);
-            })
             ->resolveUsing(function ($object) {
                 return [
                     'H' => 0,
@@ -152,8 +159,25 @@ class Product extends Resource
             ->keyLabel('Dimension')
             ->disableAddingRows()
             ->disableDeletingRows()
+            ->disableEditingKeys()
             ->showOnUpdating()
             ->showOnDetail()
-            ->hideWhenCreating();
+            ->hideWhenCreating()
+            ->resolveUsing(function ($object) {
+                $h = data_get($object, 'H');
+                $w = data_get($object, 'W');
+                $l = data_get($object, 'L');
+                if(data_get($object, "height")) {
+                    $h = data_get($object, 'height');
+                    $w = data_get($object, 'depth');
+                    $l = data_get($object, 'length');
+                }
+
+                return [
+                    'H' => $h,
+                    'W' => $w,
+                    'L' => $l,
+                ];
+            });
     }
 }
