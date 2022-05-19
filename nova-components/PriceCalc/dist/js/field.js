@@ -58,7 +58,6 @@ __webpack_require__.r(__webpack_exports__);
      * Set the initial, internal value for the field.
      */
     setInitialValue: function setInitialValue() {
-      console.log(this.field);
       this.value = this.field.value || '';
     },
 
@@ -94,10 +93,9 @@ __webpack_require__.r(__webpack_exports__);
         var after_taxes = parseFloat(sum) + parseFloat(taxTotal);
         var total = this.roundBy5(parseFloat(after_taxes).toFixed(2));
         this.value = total;
-      }
-
-      console.log(totals); // let sum = this.fields.reduce((acc, item) => acc + item.value, 0);
+      } // let sum = this.fields.reduce((acc, item) => acc + item.value, 0);
       // console.log(sum)
+
     }
   }
 });
@@ -300,6 +298,31 @@ Nova.booting(function (app, store) {
 
 /***/ }),
 
+/***/ "../../vendor/laravel/nova/resources/js/mixins/CopiesToClipboard.js":
+/*!**************************************************************************!*\
+  !*** ../../vendor/laravel/nova/resources/js/mixins/CopiesToClipboard.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  methods: {
+    copyValueToClipboard: function copyValueToClipboard(value) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(value);
+      } else if (window.clipboardData) {
+        window.clipboardData.setData('Text', value);
+      }
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "../../vendor/laravel/nova/resources/js/mixins/DependentFormField.js":
 /*!***************************************************************************!*\
   !*** ../../vendor/laravel/nova/resources/js/mixins/DependentFormField.js ***!
@@ -406,6 +429,15 @@ __webpack_require__.r(__webpack_exports__);
     setInitialValue: function setInitialValue() {
       this.value = !(this.currentField.value === undefined || this.currentField.value === null) ? this.currentField.value : this.value;
     },
+
+    /**
+     * Provide a function to fills FormData when field is visible.
+     */
+    fillIfVisible: function fillIfVisible(formData, attribute, value) {
+      if (this.currentlyIsVisible) {
+        formData.append(attribute, value);
+      }
+    },
     syncField: function syncField() {
       var _this3 = this;
 
@@ -417,7 +449,8 @@ __webpack_require__.r(__webpack_exports__);
           viaResource: this.viaResource,
           viaResourceId: this.viaResourceId,
           viaRelationship: this.viaRelationship,
-          field: this.field.attribute
+          field: this.field.attribute,
+          component: this.field.component
         }, (lodash_identity__WEBPACK_IMPORTED_MODULE_4___default())),
         cancelToken: new axios__WEBPACK_IMPORTED_MODULE_0__.CancelToken(function (canceller) {
           _this3.canceller = canceller;
@@ -443,6 +476,13 @@ __webpack_require__.r(__webpack_exports__);
      */
     currentField: function currentField() {
       return this.syncedField || this.field;
+    },
+
+    /**
+     * Determine if the field is in visible mode
+     */
+    currentlyIsVisible: function currentlyIsVisible() {
+      return this.currentField.visible;
     },
 
     /**
@@ -614,7 +654,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * field's internal value attribute
      */
     fill: function fill(formData) {
-      formData.append(this.field.attribute, String(this.value));
+      this.fillIfVisible(formData, this.field.attribute, String(this.value));
+    },
+
+    /**
+     * Provide a function to fills FormData when field is visible.
+     */
+    fillIfVisible: function fillIfVisible(formData, attribute, value) {
+      if (this.isVisible) {
+        formData.append(attribute, value);
+      }
     },
 
     /**
@@ -632,6 +681,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   },
   computed: {
+    /**
+     * Determine if the field is in visible mode
+     */
+    isVisible: function isVisible() {
+      return this.field.visible;
+    },
+
     /**
      * Determine if the field is in readonly mode
      */
@@ -1030,6 +1086,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   unmounted: function unmounted() {
     this.removeOnNavigationChangesEvent();
+    this.resetPushState();
   },
   data: function data() {
     return {
@@ -1037,14 +1094,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       removeOnBeforeUnloadEvent: null
     };
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapMutations)(['allowLeavingForm', 'preventLeavingForm'])), {}, {
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapMutations)(['allowLeavingForm', 'preventLeavingForm', 'triggerPushState', 'resetPushState'])), {}, {
     /**
      * Prevent accidental abandonment only if form was changed.
      */
     updateFormStatus: function updateFormStatus() {
       if (this.canLeaveForm == true) {
-        _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_0__.Inertia.pushState(_inertiajs_inertia__WEBPACK_IMPORTED_MODULE_0__.Inertia.page);
-        _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_0__.Inertia.ignoreHistoryState = true;
+        this.triggerPushState();
       }
 
       this.preventLeavingForm();
@@ -1092,8 +1148,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         _this4.allowLeavingForm();
       }, function () {
-        _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_0__.Inertia.pushState(_inertiajs_inertia__WEBPACK_IMPORTED_MODULE_0__.Inertia.page);
-        _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_0__.Inertia.ignoreHistoryState = true;
+        _this4.triggerPushState();
       });
     },
     handleProceedingToPreviousPage: function handleProceedingToPreviousPage() {
@@ -1101,7 +1156,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_0__.Inertia.ignoreHistoryState = false;
       this.removeOnBeforeUnloadEvent();
 
-      if (!this.canLeaveForm) {
+      if (!this.canLeaveFormToPreviousPage) {
         window.history.back();
       }
     },
@@ -1111,7 +1166,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.removeOnBeforeUnloadEvent();
     }
   }),
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)(['canLeaveForm']))
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)(['canLeaveForm', 'canLeaveFormToPreviousPage']))
 });
 
 /***/ }),
@@ -1180,33 +1235,36 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DependentFormField": () => (/* reexport safe */ _DependentFormField__WEBPACK_IMPORTED_MODULE_3__["default"]),
-/* harmony export */   "Errors": () => (/* reexport safe */ form_backend_validation__WEBPACK_IMPORTED_MODULE_12__.Errors),
-/* harmony export */   "FormEvents": () => (/* reexport safe */ _FormEvents__WEBPACK_IMPORTED_MODULE_8__["default"]),
-/* harmony export */   "FormField": () => (/* reexport safe */ _FormField__WEBPACK_IMPORTED_MODULE_9__["default"]),
-/* harmony export */   "HandlesFormRequest": () => (/* reexport safe */ _HandlesFormRequest__WEBPACK_IMPORTED_MODULE_4__["default"]),
-/* harmony export */   "HandlesUploads": () => (/* reexport safe */ _HandlesUploads__WEBPACK_IMPORTED_MODULE_5__["default"]),
-/* harmony export */   "HandlesValidationErrors": () => (/* reexport safe */ _HandlesValidationErrors__WEBPACK_IMPORTED_MODULE_10__["default"]),
-/* harmony export */   "HasCards": () => (/* reexport safe */ _HasCards__WEBPACK_IMPORTED_MODULE_11__["default"]),
-/* harmony export */   "Localization": () => (/* reexport safe */ _Localization__WEBPACK_IMPORTED_MODULE_6__["default"]),
-/* harmony export */   "MetricBehavior": () => (/* reexport safe */ _MetricBehavior__WEBPACK_IMPORTED_MODULE_7__["default"]),
-/* harmony export */   "PreventsFormAbandonment": () => (/* reexport safe */ _PreventsFormAbandonment__WEBPACK_IMPORTED_MODULE_1__["default"]),
-/* harmony export */   "PreventsModalAbandonment": () => (/* reexport safe */ _PreventsModalAbandonment__WEBPACK_IMPORTED_MODULE_2__["default"]),
+/* harmony export */   "CopiesToClipboard": () => (/* reexport safe */ _CopiesToClipboard__WEBPACK_IMPORTED_MODULE_1__["default"]),
+/* harmony export */   "DependentFormField": () => (/* reexport safe */ _DependentFormField__WEBPACK_IMPORTED_MODULE_4__["default"]),
+/* harmony export */   "Errors": () => (/* reexport safe */ form_backend_validation__WEBPACK_IMPORTED_MODULE_13__.Errors),
+/* harmony export */   "FormEvents": () => (/* reexport safe */ _FormEvents__WEBPACK_IMPORTED_MODULE_9__["default"]),
+/* harmony export */   "FormField": () => (/* reexport safe */ _FormField__WEBPACK_IMPORTED_MODULE_10__["default"]),
+/* harmony export */   "HandlesFormRequest": () => (/* reexport safe */ _HandlesFormRequest__WEBPACK_IMPORTED_MODULE_5__["default"]),
+/* harmony export */   "HandlesUploads": () => (/* reexport safe */ _HandlesUploads__WEBPACK_IMPORTED_MODULE_6__["default"]),
+/* harmony export */   "HandlesValidationErrors": () => (/* reexport safe */ _HandlesValidationErrors__WEBPACK_IMPORTED_MODULE_11__["default"]),
+/* harmony export */   "HasCards": () => (/* reexport safe */ _HasCards__WEBPACK_IMPORTED_MODULE_12__["default"]),
+/* harmony export */   "Localization": () => (/* reexport safe */ _Localization__WEBPACK_IMPORTED_MODULE_7__["default"]),
+/* harmony export */   "MetricBehavior": () => (/* reexport safe */ _MetricBehavior__WEBPACK_IMPORTED_MODULE_8__["default"]),
+/* harmony export */   "PreventsFormAbandonment": () => (/* reexport safe */ _PreventsFormAbandonment__WEBPACK_IMPORTED_MODULE_2__["default"]),
+/* harmony export */   "PreventsModalAbandonment": () => (/* reexport safe */ _PreventsModalAbandonment__WEBPACK_IMPORTED_MODULE_3__["default"]),
 /* harmony export */   "mapProps": () => (/* reexport safe */ _propTypes__WEBPACK_IMPORTED_MODULE_0__.mapProps)
 /* harmony export */ });
 /* harmony import */ var _propTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./propTypes */ "../../vendor/laravel/nova/resources/js/mixins/propTypes.js");
-/* harmony import */ var _PreventsFormAbandonment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PreventsFormAbandonment */ "../../vendor/laravel/nova/resources/js/mixins/PreventsFormAbandonment.js");
-/* harmony import */ var _PreventsModalAbandonment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PreventsModalAbandonment */ "../../vendor/laravel/nova/resources/js/mixins/PreventsModalAbandonment.js");
-/* harmony import */ var _DependentFormField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./DependentFormField */ "../../vendor/laravel/nova/resources/js/mixins/DependentFormField.js");
-/* harmony import */ var _HandlesFormRequest__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./HandlesFormRequest */ "../../vendor/laravel/nova/resources/js/mixins/HandlesFormRequest.js");
-/* harmony import */ var _HandlesUploads__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./HandlesUploads */ "../../vendor/laravel/nova/resources/js/mixins/HandlesUploads.js");
-/* harmony import */ var _Localization__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Localization */ "../../vendor/laravel/nova/resources/js/mixins/Localization.js");
-/* harmony import */ var _MetricBehavior__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./MetricBehavior */ "../../vendor/laravel/nova/resources/js/mixins/MetricBehavior.js");
-/* harmony import */ var _FormEvents__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./FormEvents */ "../../vendor/laravel/nova/resources/js/mixins/FormEvents.js");
-/* harmony import */ var _FormField__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./FormField */ "../../vendor/laravel/nova/resources/js/mixins/FormField.js");
-/* harmony import */ var _HandlesValidationErrors__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./HandlesValidationErrors */ "../../vendor/laravel/nova/resources/js/mixins/HandlesValidationErrors.js");
-/* harmony import */ var _HasCards__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./HasCards */ "../../vendor/laravel/nova/resources/js/mixins/HasCards.js");
-/* harmony import */ var form_backend_validation__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! form-backend-validation */ "../../vendor/laravel/nova/node_modules/form-backend-validation/dist/index.js");
+/* harmony import */ var _CopiesToClipboard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CopiesToClipboard */ "../../vendor/laravel/nova/resources/js/mixins/CopiesToClipboard.js");
+/* harmony import */ var _PreventsFormAbandonment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PreventsFormAbandonment */ "../../vendor/laravel/nova/resources/js/mixins/PreventsFormAbandonment.js");
+/* harmony import */ var _PreventsModalAbandonment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PreventsModalAbandonment */ "../../vendor/laravel/nova/resources/js/mixins/PreventsModalAbandonment.js");
+/* harmony import */ var _DependentFormField__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./DependentFormField */ "../../vendor/laravel/nova/resources/js/mixins/DependentFormField.js");
+/* harmony import */ var _HandlesFormRequest__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./HandlesFormRequest */ "../../vendor/laravel/nova/resources/js/mixins/HandlesFormRequest.js");
+/* harmony import */ var _HandlesUploads__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./HandlesUploads */ "../../vendor/laravel/nova/resources/js/mixins/HandlesUploads.js");
+/* harmony import */ var _Localization__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Localization */ "../../vendor/laravel/nova/resources/js/mixins/Localization.js");
+/* harmony import */ var _MetricBehavior__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./MetricBehavior */ "../../vendor/laravel/nova/resources/js/mixins/MetricBehavior.js");
+/* harmony import */ var _FormEvents__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./FormEvents */ "../../vendor/laravel/nova/resources/js/mixins/FormEvents.js");
+/* harmony import */ var _FormField__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./FormField */ "../../vendor/laravel/nova/resources/js/mixins/FormField.js");
+/* harmony import */ var _HandlesValidationErrors__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./HandlesValidationErrors */ "../../vendor/laravel/nova/resources/js/mixins/HandlesValidationErrors.js");
+/* harmony import */ var _HasCards__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./HasCards */ "../../vendor/laravel/nova/resources/js/mixins/HasCards.js");
+/* harmony import */ var form_backend_validation__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! form-backend-validation */ "../../vendor/laravel/nova/node_modules/form-backend-validation/dist/index.js");
+
 
 
 

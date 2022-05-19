@@ -86,7 +86,6 @@ export default {
          * Set the initial, internal value for the field.
          */
         setInitialValue() {
-            console.log(this.field)
             this.value = this.field.value || ''
         },
 
@@ -121,8 +120,6 @@ export default {
                 let total = this.roundBy5(parseFloat(after_taxes).toFixed(2));
                 this.value = total
             }
-
-            console.log(totals)
             // let sum = this.fields.reduce((acc, item) => acc + item.value, 0);
             // console.log(sum)
         }

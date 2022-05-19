@@ -62,7 +62,7 @@ class Product extends Resource
 
             new Panel('Pricing Information', [
                 Number::make('Purchase Price', 'price')->rules('required'),
-                Text::make('List Price', 'list_price')
+                Number::make('List Price', 'list_price')
                     ->showOnIndex()
                     ->showOnDetail()
                     ->hideWhenCreating()
@@ -73,7 +73,7 @@ class Product extends Resource
                     ->hideFromDetail()
                     ->hideFromIndex()
                     ->withMeta(['price' => $this->price])
-                    ->rules('required'),
+                    ->rules('required')
             ]),
 
             $this->KeyValueCreate(),
