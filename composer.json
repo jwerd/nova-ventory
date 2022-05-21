@@ -11,6 +11,7 @@
         "php": "^8.0.2",
         "codebykyle/calculated-field": "^1.1",
         "ebess/advanced-nova-media-library": "^4.0",
+        "eminiarts/nova-tabs": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
         "jwerd/price-calc": "*",
         "laravel/framework": "^9.2",

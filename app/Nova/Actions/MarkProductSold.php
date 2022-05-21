@@ -52,7 +52,10 @@ class MarkProductSold extends Action
         return [
             Number::make('Price', 'price_sold')
                 ->rules('required')
-                ->placeholder('What price did you sell?'),
+                ->placeholder('What price did you sell?')
+                ->default(function ($request) {
+                    return data_get($this->meta, 'price');
+                }),
         ];
     }
 }

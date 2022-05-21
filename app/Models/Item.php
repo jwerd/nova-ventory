@@ -77,11 +77,20 @@ class Item extends Model implements HasMedia
 
     public function markItemSold(float $price): void
     {
-        $this->update([
+        $merged = [];
+
+        // Set list price if we don't already have it.  It should be the same as the price sold.
+        if($this->list_price == '0.0' || blank($this->list_price)) {
+            $merged = [
+                'list_price' => $price
+            ];
+        }
+
+        $this->update(array_merge($merged, [
             'price_sold' => $price,
             'sold_on'    => now(),
             'available'  => false
-        ]);
+        ]));
     }
 
     /**
