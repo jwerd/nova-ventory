@@ -61,7 +61,7 @@ class Product extends Resource
     public function fields(NovaRequest $request)
     {
         return [
-            ID::make()->sortable(),
+//            ID::make()->sortable(),
             Text::make('Name', )->rules('required', 'max:255'),
             Images::make('Main image', 'main') // second parameter is the media collection name
                 ->conversionOnIndexView('thumb') // conversion used to display the image
