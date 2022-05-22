@@ -16,7 +16,7 @@ class YearToDateSales extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->sum($request, Item::class, 'price_sold', 'sold_on')
+        return $this->sum($request, Item::withoutGlobalScopes(), 'price_sold', 'sold_on')
             ->dollars('$');
     }
 

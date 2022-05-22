@@ -11,7 +11,7 @@ use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Order extends Resource
+class Sold extends Resource
 {
     /**
      * The model the resource corresponds to.
@@ -20,6 +20,7 @@ class Order extends Resource
      */
     public static $model = \App\Models\SoldItem::class;
 
+    public static $tableStyle = 'tight';
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
@@ -36,6 +37,10 @@ class Order extends Resource
         'id',
     ];
 
+    public static function label()
+    {
+        return 'Sold';
+    }
     /**
      * Build an "index" query for the given resource.
      *

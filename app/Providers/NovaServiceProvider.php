@@ -11,7 +11,7 @@ use Laravel\Nova\NovaApplicationServiceProvider;
 use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Menu\MenuItem;
 use App\Nova\User;
-use App\Nova\Order;
+use App\Nova\Sold;
 use Laravel\Nova\Dashboards\Main;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
@@ -39,7 +39,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
                 MenuSection::make('Store', [
                     MenuItem::resource(Product::class),
-                    MenuItem::resource(Order::class),
+                    MenuItem::resource(Sold::class),
                 ])->icon('document-text')->collapsable(),
 
                 MenuSection::make('Admin', [

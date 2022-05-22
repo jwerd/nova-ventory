@@ -32,6 +32,8 @@ class Product extends Resource
      */
     public static $model = \App\Models\Item::class;
 
+    public static $tableStyle = 'tight';
+
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
@@ -69,9 +71,11 @@ class Product extends Resource
             Number::make('Purchase Price', 'price')->rules('required'),
             Number::make('List Price', 'list_price')->rules('required'),
             Text::make('Description')
+                ->hideFromIndex()
                 ->placeholder('Item purchased from Habitat for Humanity')
                 ->rules('max:255'),
             Date::make('Added on', 'created_at')
+                ->hideFromIndex()
         ];
     }
 
