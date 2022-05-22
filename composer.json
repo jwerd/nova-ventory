@@ -11,7 +11,7 @@
         "php": "^8.0.2",
         "codebykyle/calculated-field": "^1.1",
         "ebess/advanced-nova-media-library": "^4.0",
-        "eminiarts/nova-tabs": "^2.0",
+        "eminiarts/nova-tabs": "dev-master",
         "guzzlehttp/guzzle": "^7.2",
         "jwerd/price-calc": "*",
         "laravel/framework": "^9.2",
@@ -70,6 +70,10 @@
         {
             "type": "composer",
             "url": "https://nova.laravel.com"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/jwerd/nova-tabs"
         },
         {
             "type": "path",
