@@ -29,9 +29,9 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             return Blade::render('&copy; GarageVentory 2022');
         });
 
-        Nova::userTimezone(function (Request $request) {
-            return $request->user()->timezone;
-        });
+//        Nova::userTimezone(function (Request $request) {
+//            return $request->user()->timezone;
+//        });
 
         Nova::mainMenu(function (Request $request) {
             return [
