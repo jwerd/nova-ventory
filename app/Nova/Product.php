@@ -4,23 +4,15 @@ namespace App\Nova;
 
 use App\Nova\Actions\MarkProductSold;
 use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Jwerd\PriceCalc\PriceCalc;
-use Laravel\Nova\Fields\Badge;
-use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
-use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\KeyValue;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Fields\FormData;
-use Laravel\Nova\Panel;
 use Eminiarts\Tabs\Traits\HasTabs;
 use Eminiarts\Tabs\Tabs;
-use Eminiarts\Tabs\Tab;
 
 class Product extends Resource
 {
@@ -185,6 +177,18 @@ class Product extends Resource
         return [
             MarkProductSold::make()->withMeta(['price' => $this->list_price])
         ];
+    }
+
+    /**
+     * Return the location to redirect the user after creation.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Laravel\Nova\Resource  $resource
+     * @return \Laravel\Nova\URL|string
+     */
+    public static function redirectAfterCreate(NovaRequest $request, $resource)
+    {
+        return '/resources/products';
     }
 
     protected function KeyValueCreate()

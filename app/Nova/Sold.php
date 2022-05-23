@@ -35,11 +35,12 @@ class Sold extends Resource
      */
     public static $search = [
         'id',
+        'name',
     ];
 
     public static function label()
     {
-        return 'Sold';
+        return 'Sold Products';
     }
     /**
      * Build an "index" query for the given resource.
@@ -68,7 +69,7 @@ class Sold extends Resource
     public function fields(NovaRequest $request)
     {
         return [
-            ID::make()->sortable(),
+            ID::make()->sortable()->hideFromIndex(),
             Text::make('Name'),
             Currency::make('Price Sold', 'price_sold')->sortable(),
             Currency::make('Revenue')->sortable(),
