@@ -10,6 +10,7 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use SLASH2NL\NovaBackButton\NovaBackButton;
 
 class Sold extends Resource
 {
@@ -85,7 +86,10 @@ class Sold extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [];
+        return [
+            (new NovaBackButton())
+                ->onlyOnDetail(),
+        ];
     }
 
     /**

@@ -13,6 +13,7 @@ use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Eminiarts\Tabs\Traits\HasTabs;
 use Eminiarts\Tabs\Tabs;
+use SLASH2NL\NovaBackButton\NovaBackButton;
 
 class Product extends Resource
 {
@@ -140,7 +141,10 @@ class Product extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [];
+        return [
+            (new NovaBackButton())
+                ->onlyOnDetail(),
+        ];
     }
 
     /**

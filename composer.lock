@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1beddb014cedeba42a0e7b281641cba2",
+    "content-hash": "2e451f836076329d158abc73c9eb3bc6",
     "packages": [
         {
             "name": "box/spout",
@@ -4094,6 +4094,54 @@
                 "source": "https://github.com/rap2hpoutre/fast-excel/tree/v3.2.0"
             },
             "time": "2022-02-09T16:04:44+00:00"
+        },
+        {
+            "name": "slash2nl/nova-back-button",
+            "version": "v2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SLASH2NL/nova-back-button.git",
+                "reference": "79a2a2a96464f39ef4b7aedec413605c9897748e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SLASH2NL/nova-back-button/zipball/79a2a2a96464f39ef4b7aedec413605c9897748e",
+                "reference": "79a2a2a96464f39ef4b7aedec413605c9897748e",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/nova": "^4.0",
+                "php": "^7.3|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "SLASH2NL\\NovaBackButton\\CardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SLASH2NL\\NovaBackButton\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova card to display a back button.",
+            "keywords": [
+                "Back",
+                "button",
+                "laravel",
+                "nova"
+            ],
+            "support": {
+                "issues": "https://github.com/SLASH2NL/nova-back-button/issues",
+                "source": "https://github.com/SLASH2NL/nova-back-button/tree/v2.0.2"
+            },
+            "time": "2022-05-10T11:23:37+00:00"
         },
         {
             "name": "spatie/backtrace",
