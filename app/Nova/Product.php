@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Nova\Actions\MarkProductSold;
+use App\Nova\Lenses\SoldProducts;
 use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
 use Jwerd\PriceCalc\PriceCalc;
 use Laravel\Nova\Fields\Date;
@@ -82,16 +83,6 @@ class Product extends Resource
                     Images::make('Main image', 'main') // second parameter is the media collection name
                         ->conversionOnIndexView('thumb') // conversion used to display the image
                         ->hideFromIndex(),
-//
-//                    new Panel('Pricing Information', [
-//                        Number::make('Purchase Price', 'price')->rules('required'),
-//                        Number::make('List Price', 'list_price')
-//                            ->showOnIndex()
-//                            ->showOnDetail()
-//                            ->hideWhenCreating()
-//                            ->hideWhenUpdating()
-//                            ->rules('required'),
-//                    ]),
 
                     $this->KeyValueCreate(),
                     $this->KeyValueUpdate(),
@@ -167,13 +158,15 @@ class Product extends Resource
      */
     public function lenses(NovaRequest $request)
     {
-        return [];
+        return [
+            SoldProducts::make(),
+        ];
     }
 
     /**
      * Get the actions available for the resource.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Laravel\Neova\Http\Requests\NovaRequest  $request
      * @return array
      */
     public function actions(NovaRequest $request)
