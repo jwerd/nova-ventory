@@ -143,7 +143,7 @@ class Product extends Resource
     {
         return [
             (new NovaBackButton())
-                ->onlyOnDetail(),
+                ->onlyOnDetail()
         ];
     }
 
@@ -224,14 +224,9 @@ class Product extends Resource
             ->showOnDetail()
             ->hideWhenCreating()
             ->resolveUsing(function ($object) {
-                $h = data_get($object, 'H');
-                $w = data_get($object, 'W');
-                $l = data_get($object, 'L');
-                if(data_get($object, "height")) {
-                    $h = data_get($object, 'height');
-                    $w = data_get($object, 'depth');
-                    $l = data_get($object, 'length');
-                }
+                $h = data_get($object, 'H') ?? data_get($object, 'height');
+                $w = data_get($object, 'W') ?? data_get($object, 'width');
+                $l = data_get($object, 'L') ?? data_get($object, 'length');
 
                 return [
                     'H' => $h,
