@@ -70,10 +70,7 @@ class Product extends Resource
                 $decoded = json_decode($object);
                 $content = null;
                 foreach($decoded as $key => $val) {
-                    $content .= $key.' :"'.$val.'"';
-                    if($key !== 'W') {
-                        $content .= PHP_EOL;
-                    }
+                    $content .= $key.' :"'.$val.'"'.PHP_EOL;
                 }
 
                 return $content;
