@@ -67,11 +67,10 @@ class Product extends Resource
             Number::make('Purchase Price', 'price')->rules('required'),
             Number::make('List Price', 'list_price')->rules('required'),
             Code::make('Dimension')->json()->resolveUsing(function ($object) {
-                $decoded = json_decode($object);
-                if(is_array($decoded) === false) {
-                    return $object;
+                if(is_null($object)) {
+                    return null;
                 }
-
+                $decoded = json_decode($object);
                 $content = null;
                 foreach($decoded as $key => $val) {
                     $content .= $key.' :"'.$val.'"'.PHP_EOL;
@@ -99,7 +98,6 @@ class Product extends Resource
                         ->conversionOnIndexView('thumb') // conversion used to display the image
                         ->hideFromIndex(),
 
-                    $this->KeyValueCreate(),
                     $this->KeyValueUpdate(),
 
                     Number::make('Purchase Price', 'price')->rules('required'),
@@ -130,6 +128,7 @@ class Product extends Resource
             Images::make('Main image', 'main') // second parameter is the media collection name
                 ->conversionOnIndexView('thumb') // conversion used to display the image
                 ->hideFromIndex(),
+            $this->KeyValueCreate(),
             Number::make('Purchase Price', 'price')->rules('required'),
             Text::make('Description')
                 ->placeholder('Item purchased from Habitat for Humanity')
