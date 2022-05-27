@@ -7,6 +7,7 @@ use App\Nova\Lenses\MostRevenueBySoldProducts;
 use App\Nova\Lenses\SoldProducts;
 use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
 use Jwerd\PriceCalc\PriceCalc;
+use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\KeyValue;
@@ -65,7 +66,18 @@ class Product extends Resource
                 ->hideFromIndex(),
             Number::make('Purchase Price', 'price')->rules('required'),
             Number::make('List Price', 'list_price')->rules('required'),
-            KeyValue::make('Dimension')->rules('json'),
+            Code::make('Dimension')->json()->resolveUsing(function ($object) {
+                $decoded = json_decode($object);
+                $content = null;
+                foreach($decoded as $key => $val) {
+                    $content .= $key.' :"'.$val.'"';
+                    if($key !== 'W') {
+                        $content .= PHP_EOL;
+                    }
+                }
+
+                return $content;
+            }),
             Text::make('Description')
                 ->hideFromIndex()
                 ->placeholder('Item purchased from Habitat for Humanity')
