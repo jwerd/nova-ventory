@@ -68,6 +68,10 @@ class Product extends Resource
             Number::make('List Price', 'list_price')->rules('required'),
             Code::make('Dimension')->json()->resolveUsing(function ($object) {
                 $decoded = json_decode($object);
+                if(!is_array($decoded)) {
+                    return $object;
+                }
+
                 $content = null;
                 foreach($decoded as $key => $val) {
                     $content .= $key.' :"'.$val.'"'.PHP_EOL;
