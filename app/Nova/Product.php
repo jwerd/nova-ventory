@@ -77,7 +77,7 @@ class Product extends Resource
                 }
 
                 return $content;
-            }),
+            })->language('twig'),
             Text::make('Description')
                 ->hideFromIndex()
                 ->placeholder('Item purchased from Habitat for Humanity')
