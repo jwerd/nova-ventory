@@ -65,6 +65,7 @@ class Product extends Resource
                 ->hideFromIndex(),
             Number::make('Purchase Price', 'price')->rules('required'),
             Number::make('List Price', 'list_price')->rules('required'),
+            KeyValue::make('Dimension')->rules('json'),
             Text::make('Description')
                 ->hideFromIndex()
                 ->placeholder('Item purchased from Habitat for Humanity')
