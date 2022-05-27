@@ -39,7 +39,7 @@ class SoldProducts extends Lens
         return [
             Text::make('Name'),
             Currency::make('Price Sold', 'price_sold')->sortable(),
-            Currency::make('Revenue')->sortable(),
+            Currency::make('Revenue'),
             Date::make('Sold On', 'updated_at')->sortable(),
         ];
     }

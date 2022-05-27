@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Nova\Actions\MarkProductSold;
+use App\Nova\Lenses\MostRevenueBySoldProducts;
 use App\Nova\Lenses\SoldProducts;
 use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
 use Jwerd\PriceCalc\PriceCalc;
@@ -88,7 +89,7 @@ class Product extends Resource
                     $this->KeyValueUpdate(),
 
                     Number::make('Purchase Price', 'price')->rules('required'),
-                    Number::make('List Price', 'list_price')->rules('required'),
+                    Number::make('List Price', 'list_price'),
                     Text::make('Description')
                         ->placeholder('Item purchased from Habitat for Humanity')
                         ->rules('max:255'),
@@ -102,7 +103,6 @@ class Product extends Resource
                         ->hideFromDetail()
                         ->hideFromIndex()
                         ->withMeta(['price' => $this->price])
-                        ->rules('required')
                 ],
             ]),
         ];
@@ -160,6 +160,7 @@ class Product extends Resource
     {
         return [
             SoldProducts::make(),
+            MostRevenueBySoldProducts::make()
         ];
     }
 
