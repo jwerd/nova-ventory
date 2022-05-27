@@ -68,7 +68,7 @@ class Product extends Resource
             Number::make('List Price', 'list_price')->rules('required'),
             Code::make('Dimension')->json()->resolveUsing(function ($object) {
                 $decoded = json_decode($object);
-                if(!is_array($decoded)) {
+                if(is_array($decoded) === false) {
                     return $object;
                 }
 
