@@ -35,7 +35,7 @@ class MarkProductSold extends Action
             // Update price_sold and mark sold
             $item->markItemSold($fields->get('price_sold'));
 
-            return Action::visit('/resources/orders');
+            return Action::visit('/resources/products/lens/sold-products');
         } catch(\Exception $e) {
             abort(500, $e->getMessage());
         }
