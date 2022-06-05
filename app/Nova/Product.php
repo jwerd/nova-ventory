@@ -60,10 +60,9 @@ class Product extends Resource
     {
         return [
 //            ID::make()->sortable(),
-            Text::make('Name', )->rules('required', 'max:255'),
             Images::make('Main image', 'main') // second parameter is the media collection name
-                ->conversionOnIndexView('thumb') // conversion used to display the image
-                ->hideFromIndex(),
+            ->conversionOnIndexView('thumb'), // conversion used to display the image
+            Text::make('Name', )->rules('required', 'max:255'),
             Number::make('Purchase Price', 'price')->rules('required'),
             Number::make('List Price', 'list_price')->rules('required'),
             Code::make('Dimension')->json()->resolveUsing(function ($object) {
